@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CRMworlds - Manage Customer Relationships Smarter</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: linear-gradient(135deg, #1a237e, #42a5f5);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .card {
+      background: white;
+      border-radius: 16px;
+      padding: 50px 40px;
+      max-width: 480px;
+      width: 90%;
+      text-align: center;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+    }
+    .logo { font-size: 2.5rem; margin-bottom: 10px; }
+    h1 { color: #1a237e; font-size: 2rem; margin-bottom: 10px; }
+    p { color: #555; margin-bottom: 30px; font-size: 1rem; line-height: 1.6; }
+    input[type="email"] {
+      width: 100%;
+      padding: 14px;
+      border: 2px solid #ddd;
+      border-radius: 8px;
+      font-size: 1rem;
+      margin-bottom: 15px;
+      transition: border-color 0.3s;
+    }
+    input[type="email"]:focus {
+      outline: none;
+      border-color: #1a237e;
+    }
+    button {
+      width: 100%;
+      padding: 14px;
+      background: #1a237e;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    button:hover { background: #283593; }
+    #message {
+      margin-top: 20px;
+      padding: 12px;
+      border-radius: 8px;
+      font-weight: bold;
+      display: none;
+    }
+    .success { background: #e8f5e9; color: #2e7d32; display: block !important; }
+    .error { background: #ffebee; color: #c62828; display: block !important; }
+    .features {
+      display: flex;
+      justify-content: space-around;
+      margin-top: 30px;
+      padding-top: 20px;
+      border-top: 1px solid #eee;
+    }
+    .feature { text-align: center; font-size: 0.85rem; color: #888; }
+    .feature-icon { font-size: 1.5rem; margin-bottom: 5px; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="logo">🌐</div>
+    <h1>CRMworlds</h1>
+    <p>Join thousands of businesses managing their customer relationships smarter. Subscribe to get early access and exclusive updates.</p>
+    <input type="email" id="email" placeholder="Enter your email address" />
+    <button onclick="subscribe()">Get Early Access</button>
+    <div id="message"></div>
+    <div class="features">
+      <div class="feature">
+        <div class="feature-icon">📊</div>
+        <div>CRM Dashboard</div>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">🔒</div>
+        <div>Secure & Private</div>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">📧</div>
+        <div>Email Updates</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    async function subscribe() {
+      const email = document.getElementById('email').value.trim();
+      const msgDiv = document.getElementById('message');
+      msgDiv.className = '';
+      msgDiv.style.display = 'none';
+
+      if (!email) {
+        msgDiv.textContent = 'Please enter your email address.';
+        msgDiv.className = 'error';
+        return;
+      }
+
+      try {
+        const res = await fetch('/subscribe', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email })
+        });
+        const data = await res.json();
+        msgDiv.textContent = data.message;
+        msgDiv.className = res.ok ? 'success' : 'error';
+        if (res.ok) document.getElementById('email').value = '';
+      } catch {
+        msgDiv.textContent = 'Network error. Please try again.';
+        msgDiv.className = 'error';
+      }
+    }
+
+    // Allow pressing Enter to subscribe
+    document.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('email').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') subscribe();
+      });
+    });
+  </script>
+</body>
+</html>
